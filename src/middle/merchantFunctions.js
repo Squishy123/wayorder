@@ -1,5 +1,7 @@
 import { sendPayload } from './generalFunctions';
 
+const Merchant = require('../models/merchant');
+
 function validateMerchant(req, res, next) {
     req.payload.message = [];
 
@@ -59,7 +61,7 @@ async function createMerchant(req, res, next) {
 
 async function checkIfMerchantExistsNotVerified(req, res, next) {
     if (req.params.name && req.params.email) {
-        if (await User.findOne({ email: req.params.email })) {
+        if (await Merchant.findOne({ email: req.params.email })) {
             req.payload.status = 'failed';
             req.payload.message = 'Merchant already exists';
             return sendPayload(req, res);
@@ -98,7 +100,7 @@ async function verifyConfirmationToken(req, res, next) {
         return sendPayload(req, res);
     }
 
-    req.payload = await User.verifyEmailConfirmationToken(
+    req.payload = await Merchant.verifyEmailConfirmationToken(
         req.params.confirmation_token
     );
 
@@ -106,7 +108,7 @@ async function verifyConfirmationToken(req, res, next) {
 }
 
 async function verifyMerchantCredentials(req, res, next) {
-    let verified = await merchant.verifyCredentials(
+    let verified = await Merchant.verifyCredentials(
         req.params.email,
         req.params.password
     );
