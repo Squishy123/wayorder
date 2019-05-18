@@ -120,10 +120,30 @@ async function verifyConfirmationToken(req, res, next) {
     if (next) next();
 }
 
+async function verifyUserCredentials(req, res, next) {
+    let verified = await User.verifyCredentials(req.params.email, req.params.password);
+
+    if (!verified.user) {
+        req.payload = verified;
+        return sendPayload(req, res);
+    }
+
+    let accessToken = await verified.user.createAccessToken();
+
+    req.payload = {
+        status: 'success',
+        message: 'Successfully Verified',
+        data: { access_token: accessToken }
+    };
+
+    if (next) next();
+}
+
 module.exports = {
     validateUserCredentials: validateUserCredentials,
     checkIfUserExistsNotVerified: checkIfUserExistsNotVerified,
     createUser: createUser,
     sendEmailVerification: sendEmailVerification,
     verifyConfirmationToken: verifyConfirmationToken,
+    verifyUserCredentials: verifyUserCredentials
 };
