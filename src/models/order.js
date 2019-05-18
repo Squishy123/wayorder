@@ -7,8 +7,25 @@ const orderModel = new mongoose.Schema({
         default: 'pending',
         required: true,
     },
-    total: { type: Number },
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    merchant_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    purchased: [
+        {
+            product_id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+            },
+        },
+    ],
+    total_cost: Number,
     meta: { type: Object },
 });
 
