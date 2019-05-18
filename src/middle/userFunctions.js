@@ -3,7 +3,7 @@ import { sendPayload } from './generalFunctions';
 function validateUserCredentials(req, res, next) {
     req.payload.message = [];
 
-    fnLength = req.params.first_name.length;
+    let fnLength = req.params.first_name.length;
     if (fnLength < 2) {
         req.payload.status = 'failed';
         req.payload.message.push('First name length is less than 2');
@@ -13,7 +13,7 @@ function validateUserCredentials(req, res, next) {
         req.payload.message.push('First name length is greather than 36');
     }
 
-    lnLength = req.params.last_name.length;
+    let lnLength = req.params.last_name.length;
     if (lnLength < 2) {
         req.payload.status = 'failed';
         req.payload.message.push('Last name length is less than 2');
@@ -44,7 +44,7 @@ function validateUserCredentials(req, res, next) {
 async function checkIfUserExistsNotVerified(req, res, next) {
     if (req.params.first_name && req.params.last_name && req.params.email) {
         if (await User.findOne({ email: req.params.email })) {
-            req.paylod.status = 'failed';
+            req.payload.status = 'failed';
             req.payload.message = 'User already exists';
             return sendPayload;
         };
