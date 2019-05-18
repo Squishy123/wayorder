@@ -1,4 +1,5 @@
 import { sendPayload } from './generalFunctions';
+import { Mongoose } from 'mongoose';
 const Merchant = require('../models/merchant');
 
 function validateMerchant(req, res, next) {
@@ -139,6 +140,32 @@ async function verifyAccessToken(req, res, next) {
     if (next) next();
 }
 
+async function getMerchantById(req, res, next) {
+    if(!req.params.merchant_id) {
+        req.payload = {
+            status: 'failed',
+            message: 'Missing required parameter merchant_id'
+        }
+
+        return sendPayload(req, res);
+    }
+
+    let merchant = await Merchant.findOne({_id: Mongoose.Types.ObjectId(req.params.merchant_id)});
+
+    if(!merchant) {
+        req.payload = {
+            status: 'failed',
+            message: 'Invalid merchant_id'
+        }
+
+        return sendPayload(req, res);
+    }
+
+    req.scope.merchant = merchant;
+
+    if(next) next();
+}
+
 module.exports = {
     validateMerchant: validateMerchant,
     createMerchant: createMerchant,
@@ -147,4 +174,5 @@ module.exports = {
     verifyConfirmationToken: verifyConfirmationToken,
     verifyMerchantCredentials: verifyMerchantCredentials,
     verifyAccessToken: verifyAccessToken,
+    getMerchantById: getMerchantById
 };
