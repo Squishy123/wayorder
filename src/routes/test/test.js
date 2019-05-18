@@ -3,6 +3,6 @@ module.exports = {
     method: 'GET',
     handler: (req, res) => {
         res.contentType = 'json';
-        res.send({message: "Hello World!"});
-    }
-}
+        res.send({ message: 'Hello World!' });
+    },
+};
