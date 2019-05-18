@@ -3,29 +3,47 @@ import { sendPayload } from './generalFunctions';
 function validateMerchant(req, res, next) {
     req.payload.message = [];
 
-    let fnLength = req.params.first_name.length;
-    if (fnLength < 2) {
+    if (req.params.name) {
+        let fnLength = req.params.name.length;
+        if (fnLength < 2) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Name length is less than 2');
+        }
+        if (fnLength > 36) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Name length is greater than 36');
+        }
+    } else {
         req.payload.status = 'failed';
-        req.payload.message.push('First name length is less than 2');
+        req.payload.message.push('Missing required param: name');
     }
 
-    let regex = /\S+@\S+\.\S+/;
-    if (!regex.test(req.params.email)) {
+    if (req.params.email) {
+        let regex = /\S+@\S+\.\S+/;
+        if (!regex.test(req.params.email)) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Invalid email address');
+        }
+    } else {
         req.payload.status = 'failed';
-        req.payload.message.push('Invalid email address');
+        req.payload.message.push('Missing required param: email');
     }
 
-    regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if (!regex.test(req.params.password)) {
+    if (req.params.password) {
+        let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        if (!regex.test(req.params.password)) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Invalid password');
+        }
+    } else {
         req.payload.status = 'failed';
-        req.payload.message.push('Invalid password');
+        req.payload.message.push('Missing required param: password');
     }
 
     if (req.payload.status === 'failed')
-        return sendPayload;
+        return sendPayload(req, res);
 
-    if (next)
-        next();
+    if (next) next();
 }
 
 function createMerchant(req, res, next) {
@@ -46,7 +64,7 @@ async function checkIfMerchantExistsNotVerified(req, res, next) {
         if (await User.findOne({ email: req.params.email })) {
             req.payload.status = 'failed';
             req.payload.message = 'Merchant already exists';
-            return sendPayload;
+            return sendPayload(req, res);
         };
     }
 

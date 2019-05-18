@@ -1,44 +1,66 @@
 import { sendPayload } from './generalFunctions';
+const User = require('../models/user');
 
 function validateUserCredentials(req, res, next) {
+
     req.payload.message = [];
 
-    let fnLength = req.params.first_name.length;
-    if (fnLength < 2) {
+    if (req.params.first_name) {
+        let fnLength = req.params.first_name.length;
+        if (fnLength < 2) {
+            req.payload.status = 'failed';
+            req.payload.message.push('First name length is less than 2');
+        }
+        if (fnLength > 36) {
+            req.payload.status = 'failed';
+            req.payload.message.push('First name length is greater than 36');
+        }
+    } else {
         req.payload.status = 'failed';
-        req.payload.message.push('First name length is less than 2');
-    }
-    if (fnLength > 36) {
-        req.payload.status = 'failed';
-        req.payload.message.push('First name length is greather than 36');
-    }
-
-    let lnLength = req.params.last_name.length;
-    if (lnLength < 2) {
-        req.payload.status = 'failed';
-        req.payload.message.push('Last name length is less than 2');
-    }
-    if (lnLength > 36) {
-        req.payload.status = 'failed';
-        req.payload.message.push('Last name length is greather than 36');
+        req.payload.message.push('Missing required param: first_name');
     }
 
-    let regex = /\S+@\S+\.\S+/;
-    if (!regex.test(req.params.email)) {
+    if (req.params.last_name) {
+        let lnLength = req.params.last_name.length;
+        if (lnLength < 2) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Last name length is less than 2');
+        }
+        if (lnLength > 36) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Last name length is greather than 36');
+        }
+    } else {
         req.payload.status = 'failed';
-        req.payload.message.push('Invalid email address');
+        req.payload.message.push('Missing required param: last_name');
     }
 
-    regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if (!regex.test(req.params.password)) {
+    if (req.params.email) {
+        let regex = /\S+@\S+\.\S+/;
+        if (!regex.test(req.params.email)) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Invalid email address');
+        }
+    } else {
         req.payload.status = 'failed';
-        req.payload.message.push('Invalid password');
+        req.payload.message.push('Missing required param: email');
+    }
+
+    if (req.params.password) {
+        let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        if (!regex.test(req.params.password) && false) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Invalid password');
+        }
+    } else {
+        req.payload.status = 'failed';
+        req.payload.message.push('Missing required param: password');
     }
 
     if (req.payload.status === 'failed')
-        return sendPayload;
+        return sendPayload(req, res);
 
-    if(next) next();
+    if (next) next();
 }
 
 async function checkIfUserExistsNotVerified(req, res, next) {
@@ -46,35 +68,47 @@ async function checkIfUserExistsNotVerified(req, res, next) {
         if (await User.findOne({ email: req.params.email })) {
             req.payload.status = 'failed';
             req.payload.message = 'User already exists';
-            return sendPayload;
+            return sendPayload(req, res);
         };
     }
 
-    if(next) next();
+    if (next) next();
 }
 
-function createUser(req, res, next) {
+async function createUser(req, res, next) {
+    try {
     let user = new User();
+    console.log(user);
     user.first_name = req.params.first_name;
     user.last_name = req.params.last_name;
     user.email = req.params.email;
     user.password = req.params.password;
     await user.save();
-
     req.scope.user = user;
-
-    if(next) next();
+    } catch(err) {
+        console.log(err);
+    }
+    if (next) next();
 }
 
-function emailVerified(req, res, next) {
+async function emailVerified(req, res, next) {
+    let confirmToken = await req.scope.user.createEmailConfirmationToken();
+
     let info = await this.binds.transporter.sendMail({
         from: "'WayOrder'<service@wayorder.com>",
         to: `${req.params.email}`,
         subject: "Welcome to WayOrder! Please confirm your account",
-        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${req.scope.confirmation_token}`,
+        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${confirmToken}`,
     })
 
-    if(next) next();
+    //set payload
+    req.payload = {
+        message: "Successfully Created New User",
+        status: "success",
+        data: req.scope.user
+    }
+
+    if (next) next();
 }
 
 module.exports = {
