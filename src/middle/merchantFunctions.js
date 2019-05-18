@@ -55,6 +55,10 @@ async function createMerchant(req, res, next) {
     let merchant = new Merchant();
     merchant.name = req.params.name;
     merchant.email = req.params.email;
+
+    if(req.params.image)
+        merchant.image = req.params.image;
+
     await merchant.addHashedPassword(req.params.password);
     await merchant.save();
 

@@ -41,6 +41,8 @@ async function addProduct(req, res, next) {
     product.price = req.params.price;
     product.description = req.params.description;
     product.prep_time = req.params.prep_time;
+    if(req.params.image)
+        product.image = req.params.image;
 
     req.scope.merchant.menu.push(product);
     await req.scope.merchant.save();
