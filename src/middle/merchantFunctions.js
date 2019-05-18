@@ -70,14 +70,37 @@ async function checkIfMerchantExistsNotVerified(req, res, next) {
 }
 
 async function sendEmailVerification(req, res, next) {
+    let confirmToken = await req.scope.merchant.createEmailConfirmationToken();
+
     let info = await this.binds.transporter.sendMail({
         from: "'WayOrder'<service@wayorder.com>",
         to: `${req.params.email}`,
         subject: 'Welcome to WayOrder! Please confirm your account',
-        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${
-            req.scope.confirmation_token
-        }`,
+        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${confirmToken}`,
     });
+
+    //set payload
+    req.payload = {
+        message: 'Successfully Created New Merchant',
+        status: 'success',
+        data: req.scope.merchant,
+    };
+
+    if (next) next();
+}
+
+async function verifyConfirmationToken(req, res, next) {
+    if (!req.params.confirmation_token) {
+        req.payload = {
+            message: 'Missing required parameter: confirmation_token',
+            status: 'fail',
+        };
+        return sendPayload(req, res);
+    }
+
+    req.payload = await User.verifyEmailConfirmationToken(
+        req.params.confirmation_token
+    );
 
     if (next) next();
 }
@@ -87,4 +110,5 @@ module.exports = {
     createMerchant: createMerchant,
     checkIfMerchantExistsNotVerified: checkIfMerchantExistsNotVerified,
     sendEmailVerification: sendEmailVerification,
+    verifyConfirmationToken: verifyConfirmationToken,
 };
