@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 //plugins
 import connectDB from './modules/connectDB';
 import RouteLoader from './modules/routeLoader';
+import initTransporter from './modules/initTransporter';
 
 //get env vars
 require('dotenv').config();
@@ -17,15 +18,22 @@ server.use(bodyParser.json());
 server.use(
     bodyParser.urlencoded({
         extended: true,
+        type: 'application/*',
     })
 );
 
 (async function() {
+    //setup nodemailer
+    let transporter = initTransporter();
+
     //load all routes
     let routeLoader = new RouteLoader(server, {
         dir: path.join(__dirname, './routes'),
         verbose: true,
         strict: false,
+        binds: {
+            transporter: transporter,
+        },
     });
     await routeLoader.loadDir();
 
