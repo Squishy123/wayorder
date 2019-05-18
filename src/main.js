@@ -13,6 +13,8 @@ require('dotenv').config();
 //create server
 let server = express();
 
+server.use(require('cors')());
+
 server.use(bodyParser.json());
 
 server.use(
