@@ -1,26 +1,26 @@
 {
-  "name": "wayorder",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/Squishy123/wayorder",
-  "author": "squishy123 <christian.gnaw@gmail.com>",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@babel/preset-env": "^7.4.4",
-    "bcrypt": "^3.0.6",
-    "dotenv": "^8.0.0",
-    "express": "^4.17.0",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.5.9"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/node": "^7.2.2",
-    "nodemon": "^1.19.0",
-    "prettier": "^1.17.1"
-  },
-  "scripts": {
-    "dev": "nodemon --exec babel-node src/main.js",
-    "format": "prettier --write \"./**/*.{js,jsx,json}\""
-  }
+    "name": "wayorder",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/Squishy123/wayorder",
+    "author": "squishy123 <christian.gnaw@gmail.com>",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@babel/preset-env": "^7.4.4",
+        "bcrypt": "^3.0.6",
+        "dotenv": "^8.0.0",
+        "express": "^4.17.0",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.5.9"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.4.4",
+        "@babel/node": "^7.2.2",
+        "nodemon": "^1.19.0",
+        "prettier": "^1.17.1"
+    },
+    "scripts": {
+        "dev": "nodemon --exec babel-node src/main.js",
+        "format": "prettier --write \"./**/*.{js,jsx,json}\""
+    }
 }
