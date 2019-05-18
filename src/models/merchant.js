@@ -86,4 +86,16 @@ merchantModel.statics.verifyEmailConfirmationToken = async function(
     };
 };
 
+merchantModel.statics.getMenu = async function(merchant_id) {
+    let obj = mongoose.Types.ObjectId(merchant_id);
+    if (obj) {
+        return obj.menu; 
+    } else {
+        return {
+            status: 'fail',
+            message: 'Invalid Merchant ID',
+        }
+    }
+}
+
 module.exports = mongoose.model('Merchant', merchantModel);
