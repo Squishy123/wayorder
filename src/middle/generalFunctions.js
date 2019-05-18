@@ -1,7 +1,6 @@
 //combine all parsed into params
 function combineParsed(req, res, next) {
     req.params = Object.assign(req.params, req.body, req.query);
-    console.log(req.params);
     req.payload = {};
     req.scope = {};
     if (next) next();

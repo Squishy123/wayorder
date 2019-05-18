@@ -47,7 +47,7 @@ function validateUserCredentials(req, res, next) {
 
     if (req.params.password) {
         let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-        if (!regex.test(req.params.password) && false) {
+        if (!regex.test(req.params.password)) {
             req.payload.status = 'failed';
             req.payload.message.push('Invalid password');
         }
@@ -121,7 +121,10 @@ async function verifyConfirmationToken(req, res, next) {
 }
 
 async function verifyUserCredentials(req, res, next) {
-    let verified = await User.verifyCredentials(req.params.email, req.params.password);
+    let verified = await User.verifyCredentials(
+        req.params.email,
+        req.params.password
+    );
 
     if (!verified.user) {
         req.payload = verified;
@@ -133,7 +136,7 @@ async function verifyUserCredentials(req, res, next) {
     req.payload = {
         status: 'success',
         message: 'Successfully Verified',
-        data: { access_token: accessToken }
+        data: { access_token: accessToken },
     };
 
     if (next) next();
@@ -145,5 +148,5 @@ module.exports = {
     createUser: createUser,
     sendEmailVerification: sendEmailVerification,
     verifyConfirmationToken: verifyConfirmationToken,
-    verifyUserCredentials: verifyUserCredentials
+    verifyUserCredentials: verifyUserCredentials,
 };
