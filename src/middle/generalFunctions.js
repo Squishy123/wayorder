@@ -12,5 +12,5 @@ function sendPayload(req, res) {
 
 module.exports = {
     combineParsed: combineParsed,
-    sendPayload: sendPayload
+    sendPayload: sendPayload,
 };
