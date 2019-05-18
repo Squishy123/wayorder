@@ -5,7 +5,7 @@ async function addTable(req, res, next) {
     let table = new Table();
     table.space = req.params.space;
     await table.save();
-    
+
     req.scope.merchant.capacity += req.params.space;
     req.scope.merchant.tables.push(table);
     req.scope.merchant.open_tables.push(table);
@@ -14,7 +14,7 @@ async function addTable(req, res, next) {
     req.payload = {
         message: 'Successfully added table.',
         status: 'success',
-        data: { table: table},
+        data: { table: table },
     };
 
     if (next) next();
@@ -22,4 +22,4 @@ async function addTable(req, res, next) {
 
 module.exports = {
     addTable: addTable,
-}
+};
