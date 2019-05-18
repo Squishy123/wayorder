@@ -6,8 +6,8 @@ module.exports = {
     method: 'POST',
     handler: [
         merchant.validateMerchant,
+        merchant.checkIfMerchantExistsNotVerified,
         merchant.createMerchant,
-        //merchant.checkIfMerchantExistsNotVerified,
         merchant.sendEmailVerification,
         general.sendPayload,
     ],
