@@ -9,9 +9,7 @@ const userModel = new mongoose.Schema({
     orders: [
         { order_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' } },
     ],
-    current_order: {
-        order_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-    },
+    current_order_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
 });
 
 module.exports = mongoose.model('User', userModel);
