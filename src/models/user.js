@@ -32,39 +32,51 @@ userModel.methods.addHashedPassword = async function(password) {
 };
 
 userModel.methods.createEmailConfirmationToken = async function() {
-    let confirmationToken = await jwt.sign(
+    /** let confirmationToken = await jwt.sign(
         { user_id: this._id },
         process.env.SECRET,
         { algorithm: 'HS256', expiresIn: '1d' }
-    );
-    this.email_confirm = confirmationToken;
+    );*/
+    this.email_confirm =
+        Math.random()
+            .toString(36)
+            .slice(-8) +
+        Math.random()
+            .toString(36)
+            .slice(-8) +
+        Math.random()
+            .toString(36)
+            .slice(-8);
     await this.save();
-    return confirmationToken;
+    return this.email_confirm;
 };
 
 userModel.statics.verifyEmailConfirmationToken = async function(
     confirmationToken
 ) {
-    let decoded = await jwt.verify(confirmationToken, process.env.SECRET);
-    let user = await this.findOne(mongoose.Types.ObjectId(decoded.user_id));
+    //let decoded = await jwt.verify(confirmationToken, process.env.SECRET);
+    let user = await this.findOne({ email_confirm: confirmationToken });
 
-    if (confirmationToken == user.email_confirm)
+    if (confirmationToken == user.email_confirm) {
+        user.is_verified = true;
+        await user.save();
         return {
-            verified: true,
+            //verified: true,
             user: user,
             status: 'success',
             message: 'Successfully confirmed.',
         };
+    }
 
     if (user.is_verified == true)
         return {
-            verified: false,
+            //verified: false,
             status: 'fail',
             message: 'User already registered.',
         };
 
     return {
-        verified: false,
+        //verified: false,
         status: 'fail',
         message: 'Invalid confirmation token.',
     };

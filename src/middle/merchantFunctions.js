@@ -40,13 +40,12 @@ function validateMerchant(req, res, next) {
         req.payload.message.push('Missing required param: password');
     }
 
-    if (req.payload.status === 'failed')
-        return sendPayload(req, res);
+    if (req.payload.status === 'failed') return sendPayload(req, res);
 
     if (next) next();
 }
 
-function createMerchant(req, res, next) {
+async function createMerchant(req, res, next) {
     let merchant = new Merchant();
     merchant.name = req.params.name;
     merchant.email = req.params.email;
@@ -55,8 +54,7 @@ function createMerchant(req, res, next) {
 
     req.scope.merchant = merchant;
 
-    if (next)
-        next();
+    if (next) next();
 }
 
 async function checkIfMerchantExistsNotVerified(req, res, next) {
@@ -65,26 +63,28 @@ async function checkIfMerchantExistsNotVerified(req, res, next) {
             req.payload.status = 'failed';
             req.payload.message = 'Merchant already exists';
             return sendPayload(req, res);
-        };
+        }
     }
 
-    if(next) next();
+    if (next) next();
 }
 
-function emailVerified(req, res, next) {
+async function sendEmailVerification(req, res, next) {
     let info = await this.binds.transporter.sendMail({
         from: "'WayOrder'<service@wayorder.com>",
         to: `${req.params.email}`,
-        subject: "Welcome to WayOrder! Please confirm your account",
-        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${req.scope.confirmation_token}`,
-    })
+        subject: 'Welcome to WayOrder! Please confirm your account',
+        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${
+            req.scope.confirmation_token
+        }`,
+    });
 
-    if(next) next();
+    if (next) next();
 }
 
 module.exports = {
     validateMerchant: validateMerchant,
     createMerchant: createMerchant,
     checkIfMerchantExistsNotVerified: checkIfMerchantExistsNotVerified,
-    emailVerified: emailVerified
-}
+    sendEmailVerification: sendEmailVerification,
+};
