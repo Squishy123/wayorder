@@ -27,8 +27,8 @@ userModel.methods.addHashedPassword = async function(password) {
     });
     this.password = hashed;
     await this.save();
+    return hashed;
 };
-
 
 userModel.methods.createEmailConfirmationToken = async function() {
     let confirmationToken = await jwt.sign(
@@ -36,9 +36,9 @@ userModel.methods.createEmailConfirmationToken = async function() {
         process.env.SECRET,
         { algorithm: 'HS256', expiresIn: '1d' }
     );
-    await this.addHashedConfirmationToken(confirmationToken);
+    this.email_confirm = confirmationToken;
+    await this.save();
     return confirmationToken;
 };
-
 
 module.exports = mongoose.model('User', userModel);
