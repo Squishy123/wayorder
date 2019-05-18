@@ -32,7 +32,7 @@ function validateMerchant(req, res, next) {
     }
 
     if (req.params.password) {
-        let passwordLength = req.params.password;
+        let passwordLength = req.params.password.length;
         if (passwordLength < 3) {
             req.payload.status = 'failed';
             req.payload.message.push('Password length is less than 4 characters.');

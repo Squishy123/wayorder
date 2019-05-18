@@ -47,7 +47,7 @@ function validateUserCredentials(req, res, next) {
     }
 
     if (req.params.password) {
-        let passwordLength = req.params.password;
+        let passwordLength = req.params.password.length;
         if (passwordLength < 3) {
             req.payload.status = 'failed';
             req.payload.message.push('Password length is less than 4 characters.');
@@ -93,11 +93,13 @@ async function sendEmailVerification(req, res, next) {
     let confirmToken = await req.scope.user.createEmailConfirmationToken();
 
     let info = await this.binds.transporter.sendMail({
-        from: "'WayOrder'<service@wayorder.com>",
+        from: "'WayOrder'<wayorder@freeify.xyz>",
         to: `${req.params.email}`,
         subject: 'Welcome to WayOrder! Please confirm your account',
         text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${confirmToken}`,
     });
+
+    console.log(info);
 
     //set payload
     req.payload = {
