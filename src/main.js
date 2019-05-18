@@ -22,7 +22,11 @@ server.use(
 
 (async function() {
     //load all routes
-    let routeLoader = new RouteLoader(server, {dir: path.join(__dirname, './routes'), verbose: true, strict: false});
+    let routeLoader = new RouteLoader(server, {
+        dir: path.join(__dirname, './routes'),
+        verbose: true,
+        strict: false,
+    });
     await routeLoader.loadDir();
 
     //connect to DB
