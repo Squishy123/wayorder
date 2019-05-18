@@ -11,8 +11,8 @@ const userModel = new mongoose.Schema({
         { order_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' } },
     ],
     current_order_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-    is_verified: {type: Boolean, default: false},
-    email_confirm: {type: String}
+    is_verified: { type: Boolean, default: false },
+    email_confirm: { type: String },
 });
 
 userModel.methods.addHashedPassword = async function(password) {
@@ -32,13 +32,41 @@ userModel.methods.addHashedPassword = async function(password) {
 
 userModel.methods.createEmailConfirmationToken = async function() {
     let confirmationToken = await jwt.sign(
-        { user_id: this._id},
+        { user_id: this._id },
         process.env.SECRET,
         { algorithm: 'HS256', expiresIn: '1d' }
     );
     this.email_confirm = confirmationToken;
     await this.save();
     return confirmationToken;
+};
+
+userModel.statics.verifyEmailConfirmationToken = async function(
+    confirmationToken
+) {
+    let decoded = await jwt.verify(confirmationToken, process.env.SECRET);
+    let user = await this.findOne(mongoose.Types.ObjectId(decoded.user_id));
+
+    if (confirmationToken == user.email_confirm)
+        return {
+            verified: true,
+            user: user,
+            status: 'success',
+            message: 'Successfully confirmed.',
+        };
+
+    if (user.is_verified == true)
+        return {
+            verified: false,
+            status: 'fail',
+            message: 'User already registered.',
+        };
+
+    return {
+        verified: false,
+        status: 'fail',
+        message: 'Invalid confirmation token.',
+    };
 };
 
 module.exports = mongoose.model('User', userModel);
