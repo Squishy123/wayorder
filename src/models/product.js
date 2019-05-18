@@ -6,6 +6,7 @@ const productModel = new mongoose.Schema({
     description: String,
     //in millis
     prep_time: Number,
+    image: String
 });
 
 module.exports = mongoose.model('Product', productModel);

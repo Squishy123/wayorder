@@ -10,7 +10,7 @@ module.exports = {
         req.payload = {
             message: "Successfully queried merchants.",
             status: "success", data: { merchants: await Merchant.find().select('-email').select('-password') }
-
+                
         };
 
         if (next) next();

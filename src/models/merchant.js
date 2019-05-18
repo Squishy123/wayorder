@@ -32,6 +32,7 @@ const merchantModel = new mongoose.Schema({
     capacity: { type: Number , default: 0},
     email_confirm: { type: String },
     is_verified: { type: Boolean, default: false },
+    image: String
 });
 
 merchantModel.methods.addHashedPassword = async function(password) {
