@@ -4,12 +4,12 @@ function validateMerchant(req, res, next) {
     req.payload.message = [];
 
     if (req.params.name) {
-        let fnLength = req.params.name.length;
-        if (fnLength < 2) {
+        let nameLength = req.params.name.length;
+        if (nameLength < 2) {
             req.payload.status = 'failed';
             req.payload.message.push('Name length is less than 2');
         }
-        if (fnLength > 36) {
+        if (nameLength > 36) {
             req.payload.status = 'failed';
             req.payload.message.push('Name length is greater than 36');
         }
@@ -49,7 +49,7 @@ async function createMerchant(req, res, next) {
     let merchant = new Merchant();
     merchant.name = req.params.name;
     merchant.email = req.params.email;
-    merchant.password = req.params.password;
+    await merchant.addHashedPassword(req.params.password);
     await merchant.save();
 
     req.scope.merchant = merchant;
