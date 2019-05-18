@@ -29,7 +29,7 @@ const merchantModel = new mongoose.Schema({
     ],
     //expect [lat, long]
     location: [{ type: Number }],
-    capacity: { type: Number },
+    capacity: { type: Number , default: 0},
     email_confirm: { type: String },
     is_verified: { type: Boolean, default: false },
 });
