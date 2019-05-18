@@ -13,7 +13,8 @@
         "express": "^4.17.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.5.9",
-        "nodemailer": "^6.1.1"
+        "nodemailer": "^6.1.1",
+        "react-geolocation": "^1.0.4"
     },
     "devDependencies": {
         "@babel/core": "^7.4.4",
