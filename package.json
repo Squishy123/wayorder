@@ -14,7 +14,11 @@
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.5.9",
         "nodemailer": "^6.1.1",
-        "react-geolocation": "^1.0.4"
+        "react-geolocation": "^1.0.4",
+        "@babel/core": "^7.4.4",
+        "@babel/node": "^7.2.2",
+        "nodemon": "^1.19.0",
+        "prettier": "^1.17.1"
     },
     "devDependencies": {
         "@babel/core": "^7.4.4",
@@ -24,6 +28,7 @@
     },
     "scripts": {
         "dev": "nodemon --exec babel-node src/main.js",
+        "start": "nodemon --exec babel-node src/main.js",
         "format": "prettier --write \"./**/*.{js,jsx,json}\""
     }
 }

@@ -6,7 +6,8 @@ const productModel = new mongoose.Schema({
     description: String,
     //in millis
     prep_time: Number,
-    merchant_id: {type: mongoose.Schema.Types.ObjectId}
+    merchant_id: {type: mongoose.Schema.Types.ObjectId},
+    image: String
 });
 
 module.exports = mongoose.model('Product', productModel);
