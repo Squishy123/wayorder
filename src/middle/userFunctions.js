@@ -1,4 +1,5 @@
 import { sendPayload } from './generalFunctions';
+import { Mongoose } from 'mongoose';
 const User = require('../models/user');
 
 function validateUserCredentials(req, res, next) {
@@ -47,7 +48,7 @@ function validateUserCredentials(req, res, next) {
 
     if (req.params.password) {
         let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-        if (!regex.test(req.params.password)) {
+        if (!regex.test(req.params.password) && false) {
             req.payload.status = 'failed';
             req.payload.message.push('Invalid password');
         }
