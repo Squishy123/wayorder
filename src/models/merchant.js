@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const jwt = require('jsonwebtoken');
 
+const bcrypt = require('bcrypt');
+
 const merchantModel = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -118,6 +120,15 @@ merchantModel.methods.createAccessToken = async function() {
     );
 
     return accessToken;
+};
+
+merchantModel.statics.verifyAccessToken = async function(accessToken) {
+    let decoded = await jwt.verify(accessToken, process.env.SECRET);
+    let merchant = await this.findOne(
+        mongoose.Types.ObjectId(decoded.merchant_id)
+    );
+    if (!merchant) return { message: 'Invalid access token', status: 'failed' };
+    return { merchant: merchant, message: 'Success', status: 'success' };
 };
 
 module.exports = mongoose.model('Merchant', merchantModel);

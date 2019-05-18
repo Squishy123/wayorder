@@ -117,7 +117,7 @@ userModel.methods.createAccessToken = async function() {
 userModel.methods.verifyAccessToken = async function(accessToken) {
     let decoded = await jwt.verify(accessToken, process.env.SECRET);
     let user = await this.findOne(mongoose.Types.ObjectId(decoded.user_id));
-    if (!user) return { message: 'Invalid session token' };
+    if (!user) return { message: 'Invalid access token' };
     return { user: user, message: 'Success' };
 };
 
