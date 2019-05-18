@@ -3,7 +3,7 @@ function combineParsed(req, res, next) {
     req.params = Object.assign(req.params, req.body, req.query);
     console.log(req.params);
     req.payload = {};
-    req.scope = {}
+    req.scope = {};
     if (next) next();
 }
 
@@ -14,5 +14,5 @@ function sendPayload(req, res) {
 
 module.exports = {
     combineParsed: combineParsed,
-    sendPayload: sendPayload
+    sendPayload: sendPayload,
 };

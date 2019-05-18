@@ -8,6 +8,7 @@ module.exports = {
         user.validateUserCredentials,
         user.checkIfUserExistsNotVerified,
         user.createUser,
-        user.emailVerified,
-        general.sendPayload]
-}
+        user.sendEmailVerification,
+        general.sendPayload,
+    ],
+};

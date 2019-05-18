@@ -7,7 +7,7 @@ const merchantModel = new mongoose.Schema({
     branches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Store' }],
     meta: { Type: Object },
     email_confirm: { type: String },
-    is_verified: { type: Boolean, default: false }
+    is_verified: { type: Boolean, default: false },
 });
 
 merchantModel.methods.addHashedPassword = async function(password) {
@@ -40,7 +40,9 @@ merchantModel.statics.verifyEmailConfirmationToken = async function(
     confirmationToken
 ) {
     let decoded = await jwt.verify(confirmationToken, process.env.SECRET);
-    let merchant = await this.findOne(mongoose.Types.ObjectId(decoded.merchant_id));
+    let merchant = await this.findOne(
+        mongoose.Types.ObjectId(decoded.merchant_id)
+    );
 
     if (confirmationToken == merchant.email_confirm)
         return {
@@ -63,6 +65,5 @@ merchantModel.statics.verifyEmailConfirmationToken = async function(
         message: 'Invalid confirmation token.',
     };
 };
-
 
 module.exports = mongoose.model('Merchant', merchantModel);
