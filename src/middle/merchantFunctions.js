@@ -32,10 +32,14 @@ function validateMerchant(req, res, next) {
     }
 
     if (req.params.password) {
-        let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-        if (!regex.test(req.params.password)) {
+        let passwordLength = req.params.password;
+        if (passwordLength < 3) {
             req.payload.status = 'failed';
-            req.payload.message.push('Invalid password');
+            req.payload.message.push('Password length is less than 4 characters.');
+        }
+        if (passwordLength > 32) {
+            req.payload.status = 'failed';
+            req.payload.message.push('Password length is greater than 32 characters.')
         }
     } else {
         req.payload.status = 'failed';
