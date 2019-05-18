@@ -1,6 +1,4 @@
 import { sendPayload } from './generalFunctions';
-import { Merchant } from '../models/merchant.js';
-
 const Merchant = require('../models/merchant');
 
 function validateMerchant(req, res, next) {
@@ -130,49 +128,14 @@ async function verifyMerchantCredentials(req, res, next) {
     if (next) next();
 }
 
-function validateProduct(req, res, next) {
-    req.payload.message = [];
+async function verifyAccessToken(req, res, next) {
+    let verified = await Merchant.verifyAccessToken(req.params.access_token);
 
-    if (req.params.name) {
-        let nameLength = req.params.name.length;
-        if (nameLength < 2) {
-            req.payload.status = 'failed';
-            req.payload.message.push('Name length is less than 2');
-        }
-        if (nameLength > 36) {
-            req.payload.status = 'failed';
-            req.payload.message.push('Name length is greater than 36');
-        }
-    } else {
-        sendPayload.status = 'failed';
-        sendPayload.message = 'Missing required param: name'
-    }
+    req.payload = verified;
+    if (!verified.merchant) return sendPayload(req, res);
 
-    if (req.params.price) {
-        if (!isNaN(req.params.price)) {
-            sendPayload.status = 'failed';
-            sendPayload.message = 'Invalid price';
-        }
-    } else {
-        sendPayload.status = 'failed';
-        sendPayload.message = 'Missing required param: price'
-    }
+    req.scope.merchant = verified.merchant;
 
-    if (sendPayload.status === 'failed') {
-        return sendPayload(req, res);
-    }
-
-    if (next) next();
-}
-
-async function addProduct(req, res, next) {
-    let product = new Product();
-    product.name = req.params.name;
-    product.price = req.params.price;
-    product.description = req.params.description;
-    product.prep_time = req.params.prep_time;
-    await product.save();
-    Merchant.findOne(merchant_id).menu.push(product);
     if (next) next();
 }
 
@@ -183,6 +146,5 @@ module.exports = {
     sendEmailVerification: sendEmailVerification,
     verifyConfirmationToken: verifyConfirmationToken,
     verifyMerchantCredentials: verifyMerchantCredentials,
-    addProduct: addProduct,
-    validateProduct: validateProduct,
+    verifyAccessToken: verifyAccessToken,
 };
