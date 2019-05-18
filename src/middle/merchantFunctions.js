@@ -105,10 +105,33 @@ async function verifyConfirmationToken(req, res, next) {
     if (next) next();
 }
 
+async function verifyMerchantCredentials(req, res, next) {
+    let verified = await merchant.verifyCredentials(
+        req.params.email,
+        req.params.password
+    );
+
+    if (!verified.merchant) {
+        req.payload = verified;
+        return sendPayload(req, res);
+    }
+
+    let accessToken = await verified.merchant.createAccessToken();
+
+    req.payload = {
+        status: 'success',
+        message: 'Successfully Verified',
+        data: { access_token: accessToken },
+    };
+
+    if (next) next();
+}
+
 module.exports = {
     validateMerchant: validateMerchant,
     createMerchant: createMerchant,
     checkIfMerchantExistsNotVerified: checkIfMerchantExistsNotVerified,
     sendEmailVerification: sendEmailVerification,
     verifyConfirmationToken: verifyConfirmationToken,
+    verifyMerchantCredentials: verifyMerchantCredentials,
 };

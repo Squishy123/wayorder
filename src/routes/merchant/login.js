@@ -4,5 +4,5 @@ import * as general from '../../middle/generalFunctions';
 module.exports = {
     path: '/merchant/login',
     method: 'POST',
-    handler: [merchant.verifyUserCredentials, general.sendPayload],
+    handler: [merchant.verifyMerchantCredentials, general.sendPayload],
 };

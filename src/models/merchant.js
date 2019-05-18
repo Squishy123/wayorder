@@ -86,4 +86,36 @@ merchantModel.statics.verifyEmailConfirmationToken = async function(
     };
 };
 
+merchantModel.statics.verifyCredentials = async function(email, password) {
+    if (!email && !password)
+        return { status: 'failed', message: 'Email and password required.' };
+
+    if (!email) return { status: 'failed', message: 'Email required.' };
+
+    if (!password) return { status: 'failed', message: 'Password required.' };
+
+    let merchant = await this.findOne({ email: email });
+
+    if (!merchant) return { status: 'failed', message: 'No account found.' };
+
+    let valid = await bcrypt.compare(password, merchant.password);
+    if (!valid) return { status: 'failed', message: 'Incorrect password.' };
+
+    return {
+        status: 'success',
+        merchant: merchant,
+        message: 'Verification successful.',
+    };
+};
+
+userModel.methods.createAccessToken = async function() {
+    let accessToken = await jwt.sign(
+        { merchant_id: this._id },
+        process.env.SECRET,
+        { algorithm: 'HS256', expiresIn: '1d' }
+    );
+
+    return accessToken;
+};
+
 module.exports = mongoose.model('Merchant', merchantModel);
