@@ -7,7 +7,7 @@ module.exports = {
     handler: [
         merchant.validateMerchant,
         merchant.createMerchant,
-        merchant.checkIfMerchantExistsNotVerified,
+        //merchant.checkIfMerchantExistsNotVerified,
         merchant.sendEmailVerification,
         general.sendPayload,
     ],

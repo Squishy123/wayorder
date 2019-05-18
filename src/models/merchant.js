@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const jwt = require('jsonwebtoken');
+
 const merchantModel = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -76,7 +78,7 @@ merchantModel.statics.verifyEmailConfirmationToken = async function(
         return {
             verified: false,
             status: 'fail',
-            message: 'User already registered.',
+            message: 'Merchant already registered.',
         };
 
     return {
@@ -108,7 +110,7 @@ merchantModel.statics.verifyCredentials = async function(email, password) {
     };
 };
 
-userModel.methods.createAccessToken = async function() {
+merchantModel.methods.createAccessToken = async function() {
     let accessToken = await jwt.sign(
         { merchant_id: this._id },
         process.env.SECRET,
