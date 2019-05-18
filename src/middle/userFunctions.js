@@ -1,4 +1,4 @@
-import {sendPayload} from './generalFunctions';
+import { sendPayload } from './generalFunctions';
 
 function validateUserCredentials(req, res, next) {
     req.payload.message = [];
@@ -35,17 +35,22 @@ function validateUserCredentials(req, res, next) {
         req.payload.message.push('Invalid password');
     }
 
-    return sendPayload;
+    if (req.payload.status === 'failed')
+        return sendPayload;
+
+    if(next) next();
 }
 
 async function checkIfUserExistsNotVerified(req, res, next) {
     if (req.params.first_name && req.params.last_name && req.params.email) {
-        if (await User.findOne({email: req.params.email})) {
+        if (await User.findOne({ email: req.params.email })) {
             req.paylod.status = 'failed';
             req.payload.message = 'User already exists';
             return sendPayload;
         };
     }
+
+    if(next) next();
 }
 
 function createUser(req, res, next) {
@@ -55,6 +60,10 @@ function createUser(req, res, next) {
     user.email = req.params.email;
     user.password = req.params.password;
     await user.save();
+
+    req.scope.user = user;
+
+    if(next) next();
 }
 
 function emailVerified(req, res, next) {
@@ -62,8 +71,10 @@ function emailVerified(req, res, next) {
         from: "'WayOrder'<service@wayorder.com>",
         to: `${req.params.email}`,
         subject: "Welcome to WayOrder! Please confirm your account",
-        text: `Please visit the following link in order to confirm your account registration: freeify.xyz/confirm?confirmation_token=${req.state.confirmation_token}`,
+        text: `Please visit the following link in order to confirm your account registration: wayorder.com/confirm?confirmation_token=${req.scope.confirmation_token}`,
     })
+
+    if(next) next();
 }
 
 module.exports = {
