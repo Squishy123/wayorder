@@ -139,6 +139,27 @@ async function verifyAccessToken(req, res, next) {
     if (next) next();
 }
 
+async function updateInfo(req, res, next) {
+    if (req.params.name)
+        req.scope.merchant.name = req.params.name;
+
+    if (req.params.description)
+        req.scope.merchant.description = req.params.description;
+
+    if (req.params.location)
+        req.scope.merchant.location = req.params.location;
+
+    await req.scope.merchant.save();
+
+    req.payload = {
+        message: "Successfully updated info.",
+        status: "success",
+        data: req.scope.merchant
+    }
+
+    if (next) next();
+}
+
 module.exports = {
     validateMerchant: validateMerchant,
     createMerchant: createMerchant,
@@ -147,4 +168,5 @@ module.exports = {
     verifyConfirmationToken: verifyConfirmationToken,
     verifyMerchantCredentials: verifyMerchantCredentials,
     verifyAccessToken: verifyAccessToken,
+    updateInfo, updateInfo
 };
