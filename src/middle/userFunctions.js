@@ -82,7 +82,7 @@ async function createUser(req, res, next) {
     user.first_name = req.params.first_name;
     user.last_name = req.params.last_name;
     user.email = req.params.email;
-    user.password = req.params.password;
+    await user.addHashedPassword(req.params.password);
     await user.save();
     req.scope.user = user;
     } catch(err) {
